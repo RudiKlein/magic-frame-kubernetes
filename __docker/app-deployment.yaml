@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe --file docker-compose.yaml convert
+    kompose.version: 1.38.0 (a8f5d1cbd)
+  labels:
+    io.kompose.service: app
+  name: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe --file docker-compose.yaml convert
+        kompose.version: 1.38.0 (a8f5d1cbd)
+      labels:
+        io.kompose.service: app
+    spec:
+      containers:
+        - env:
+            - name: ADMIN_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  key: ADMIN_EMAIL
+                  name: -env
+            - name: ADMIN_PASSWORD
+            - name: APP_BASE_URL
+            - name: CADDY_ADMIN_URL
+              value: http://caddy:2019
+            - name: COOKIE_SECURE
+            - name: DATABASE_URL
+              value: postgresql://postgres:postgres@db:5432/magicdashboard?schema=public
+            - name: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+            - name: MS_CLIENT_ID
+            - name: MS_CLIENT_SECRET
+            - name: NODE_ENV
+              value: production
+            - name: OPENWEATHERMAP_API_KEY
+            - name: SESSION_SECRET
+          image: app
+          name: app
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /app/configs
+              name: magic-configs
+            - mountPath: /app/wallpapers
+              name: magic-wallpapers
+            - mountPath: /caddy/config
+              name: magic-caddy-config
+      restartPolicy: Always
+      volumes:
+        - name: magic-configs
+          persistentVolumeClaim:
+            claimName: magic-configs
+        - name: magic-wallpapers
+          persistentVolumeClaim:
+            claimName: magic-wallpapers
+        - name: magic-caddy-config
+          persistentVolumeClaim:
+            claimName: magic-caddy-config
