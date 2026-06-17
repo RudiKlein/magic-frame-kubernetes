@@ -1,0 +1,136 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="robots" content="noindex"><meta name="built-on" content="2026-06-16T17:56:17.7581388"><title>Persistent Volumes (PV) | Help Instance</title><script type="application/json" id="virtual-toc-data">[{"id":"caddy-conf-pv","level":0,"title":"Caddy conf PV","anchor":"#caddy-conf-pv"},{"id":"caddy-configuration-pv","level":0,"title":"Caddy configuration PV","anchor":"#caddy-configuration-pv"},{"id":"caddy-data-pv","level":0,"title":"Caddy data PV","anchor":"#caddy-data-pv"},{"id":"magic-frame-configs-pv","level":0,"title":"Magic Frame configs PV","anchor":"#magic-frame-configs-pv"},{"id":"magic-frame-database-pv","level":0,"title":"Magic Frame database PV","anchor":"#magic-frame-database-pv"},{"id":"magic-frame-wallpapers-pv","level":0,"title":"Magic Frame wallpapers PV","anchor":"#magic-frame-wallpapers-pv"}]</script><script type="application/json" id="topic-shortcuts"></script><link href="https://resources.jetbrains.com/writerside/apidoc/6.27.0-b1156/app.css" rel="stylesheet"><meta name="msapplication-TileColor" content="#000000"><link rel="apple-touch-icon" sizes="180x180" href="https://jetbrains.com/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="https://jetbrains.com/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="https://jetbrains.com/favicon-16x16.png"><meta name="msapplication-TileImage" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-144x144.png"><meta name="msapplication-square70x70logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-70x70.png"><meta name="msapplication-square150x150logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-150x150.png"><meta name="msapplication-wide310x150logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-310x150.png"><meta name="msapplication-square310x310logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-310x310.png"><meta name="image" content=""><!-- Open Graph --><meta property="og:title" content="Persistent Volumes (PV) | Help Instance"><meta property="og:description" content=""><meta property="og:image" content=""><meta property="og:site_name" content="Help Instance Help"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="writerside-documentation/persistent-volumes-pv.html"><!-- End Open Graph --><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content=""><meta name="twitter:title" content="Persistent Volumes (PV) | Help Instance"><meta name="twitter:description" content=""><meta name="twitter:creator" content=""><meta name="twitter:image:src" content=""><!-- End Twitter Card --><!-- Schema.org WebPage --><script type="application/ld+json">{
+    "@context": "http://schema.org",
+    "@type": "WebPage",
+    "@id": "writerside-documentation/persistent-volumes-pv.html#webpage",
+    "url": "writerside-documentation/persistent-volumes-pv.html",
+    "name": "Persistent Volumes (PV) | Help Instance",
+    "description": "",
+    "image": "",
+    "inLanguage":"en-US"
+}</script><!-- End Schema.org --><!-- Schema.org WebSite --><script type="application/ld+json">{
+    "@type": "WebSite",
+    "@id": "writerside-documentation/#website",
+    "url": "writerside-documentation/",
+    "name": "Help Instance Help"
+}</script><!-- End Schema.org --></head><body data-id="persistent-volumes-pv" data-main-title="Persistent Volumes (PV)" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs=""><div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>Help Instance  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="persistent-volumes-pv" id="persistent-volumes-pv.md">Persistent Volumes (PV)</h1><p id="-stmwlv_3">Persistent Volumes (PV) are a key component of Kubernetes that provide a way to manage storage resources in a cluster. They allow users to decouple storage from the lifecycle of individual pods, enabling data persistence across pod restarts and failures.</p><p id="-stmwlv_4">Below PVs can be used, but are not always necessary. For example, when running on K3S with Rancher, the default storage class is <code class="code" id="-stmwlv_11">local-path</code>, which automatically provisions storage for pods. However, if you want to use a specific storage class or manage your own persistent volumes, you can define PVs as shown below.</p><section class="chapter"><h2 id="caddy-conf-pv" data-toc="caddy-conf-pv">Caddy conf PV</h2><p id="-stmwlv_12">Is used for storing Caddy configuration files. This allows the Caddy server to persist its configuration even if the pod is restarted or recreated. The PV is defined with a <code class="code" id="-stmwlv_14">hostPath</code> that points to a directory on the host machine, and it is set to retain data even if the PV is deleted.</p><div class="code-block" data-lang="none">
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: magic-frame-caddy-conf-pv
+  namespace: magic-frame
+spec:
+  claimRef:
+    namespace: magic-frame
+    name: magic-frame-caddy-conf-pvc
+  storageClassName: magic-frame-storage
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+  # Path depends on you local setup, this is for K3S with Rancher
+    path: /var/lib/rancher/k3s/storage/magic-frame-caddy-conf-pv
+    type: DirectoryOrCreate
+</div></section><section class="chapter"><h2 id="caddy-configuration-pv" data-toc="caddy-configuration-pv">Caddy configuration PV</h2><p id="-stmwlv_15">Is used for storing Caddy configuration files. This allows the Caddy server to persist its configuration even if the pod is restarted or recreated. The PV is defined with a <code class="code" id="-stmwlv_17">hostPath</code> that points to a directory on the host machine, and it is set to retain data even if the PV is deleted.</p><div class="code-block" data-lang="none">
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: magic-frame-caddy-config-pv
+  namespace: magic-frame
+spec:
+  claimRef:
+    namespace: magic-frame
+    name: magic-frame-caddy-config-pvc
+  storageClassName: magic-frame-storage
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+  # Path depends on you local setup, this is for K3S with Rancher
+    path: /var/lib/rancher/k3s/storage/magic-frame-caddy-config-pv
+    type: DirectoryOrCreate
+</div></section><section class="chapter"><h2 id="caddy-data-pv" data-toc="caddy-data-pv">Caddy data PV</h2><p id="-stmwlv_18">Is used for storing Caddy data files. This allows the Caddy server to persist its data even if the pod is restarted or recreated. The PV is defined with a <code class="code" id="-stmwlv_20">hostPath</code> that points to a directory on the host machine, and it is set to retain data even if the PV is deleted.</p><div class="code-block" data-lang="none">
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: magic-frame-caddy-data-pv
+  namespace: magic-frame
+spec:
+  claimRef:
+    namespace: magic-frame
+    name: magic-frame-caddy-data-pvc
+  storageClassName: magic-frame-storage
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+  # Path depends on you local setup, this is for K3S with Rancher
+    path: /var/lib/rancher/k3s/storage/magic-frame-caddy-data-pv
+    type: DirectoryOrCreate
+</div></section><section class="chapter"><h2 id="magic-frame-configs-pv" data-toc="magic-frame-configs-pv">Magic Frame configs PV</h2><p id="-stmwlv_21">Is used for storing Magic Frame configuration files.</p><div class="code-block" data-lang="none">
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: magic-frame-configs-pv
+  namespace: magic-frame
+spec:
+  claimRef:
+    namespace: magic-frame
+    name: magic-frame-configs-pvc
+  storageClassName: magic-frame-storage
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+  # Path depends on you local setup, this is for K3S with Rancher
+    path: /var/lib/rancher/k3s/storage/magic-frame-configs-pv 
+    type: DirectoryOrCreate
+    
+</div></section><section class="chapter"><h2 id="magic-frame-database-pv" data-toc="magic-frame-database-pv">Magic Frame database PV</h2><p id="-stmwlv_23">Is used for storing Magic Frame database files.</p><div class="code-block" data-lang="none">
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: magic-frame-pgdata-pv
+  namespace: magic-frame
+spec:
+  claimRef:
+    namespace: magic-frame
+    name: magic-frame-pgdata-pvc
+  storageClassName: magic-frame-storage
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    # Path depends on you local setup, this is for K3S with Rancher
+    path: /var/lib/rancher/k3s/storage/magic-frame-pgdata-pv
+    type: DirectoryOrCreate
+</div></section><section class="chapter"><h2 id="magic-frame-wallpapers-pv" data-toc="magic-frame-wallpapers-pv">Magic Frame wallpapers PV</h2><p id="-stmwlv_25">Is used for storing Magic Frame wallpapers.</p><div class="code-block" data-lang="none">
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: magic-frame-wallpapers-pv
+  namespace: magic-frame
+spec:
+  claimRef:
+    namespace: magic-frame
+    name: magic-frame-wallpapers-pvc
+  storageClassName: magic-frame-storage
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /var/lib/rancher/k3s/storage/magic-frame-wallpapers-pv
+    type: DirectoryOrCreate
+</div></section><div class="last-modified">16 juni 2026</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="magic-frame-kubernetes-installation-manual.html" class="navigation-links__prev">Magic Frame Kubernetes installation manual</a><a href="persistent-volume-claims-pvc.html" class="navigation-links__next">Persistent Volume Claims (PVC)</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.27.0-b1156/app.js"></script></body></html>

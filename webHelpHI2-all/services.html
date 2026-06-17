@@ -1,0 +1,78 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="robots" content="noindex"><meta name="built-on" content="2026-06-16T17:56:17.7581388"><title>Services | Help Instance</title><script type="application/json" id="virtual-toc-data">[{"id":"caddy-pod-service","level":0,"title":"Caddy pod service","anchor":"#caddy-pod-service"},{"id":"database-pod-service","level":0,"title":"Database pod service","anchor":"#database-pod-service"},{"id":"app-pod-service","level":0,"title":"App pod service","anchor":"#app-pod-service"}]</script><script type="application/json" id="topic-shortcuts"></script><link href="https://resources.jetbrains.com/writerside/apidoc/6.27.0-b1156/app.css" rel="stylesheet"><meta name="msapplication-TileColor" content="#000000"><link rel="apple-touch-icon" sizes="180x180" href="https://jetbrains.com/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="https://jetbrains.com/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="https://jetbrains.com/favicon-16x16.png"><meta name="msapplication-TileImage" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-144x144.png"><meta name="msapplication-square70x70logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-70x70.png"><meta name="msapplication-square150x150logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-150x150.png"><meta name="msapplication-wide310x150logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-310x150.png"><meta name="msapplication-square310x310logo" content="https://resources.jetbrains.com/storage/ui/favicons/mstile-310x310.png"><meta name="image" content=""><!-- Open Graph --><meta property="og:title" content="Services | Help Instance"><meta property="og:description" content=""><meta property="og:image" content=""><meta property="og:site_name" content="Help Instance Help"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="writerside-documentation/services.html"><!-- End Open Graph --><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content=""><meta name="twitter:title" content="Services | Help Instance"><meta name="twitter:description" content=""><meta name="twitter:creator" content=""><meta name="twitter:image:src" content=""><!-- End Twitter Card --><!-- Schema.org WebPage --><script type="application/ld+json">{
+    "@context": "http://schema.org",
+    "@type": "WebPage",
+    "@id": "writerside-documentation/services.html#webpage",
+    "url": "writerside-documentation/services.html",
+    "name": "Services | Help Instance",
+    "description": "",
+    "image": "",
+    "inLanguage":"en-US"
+}</script><!-- End Schema.org --><!-- Schema.org WebSite --><script type="application/ld+json">{
+    "@type": "WebSite",
+    "@id": "writerside-documentation/#website",
+    "url": "writerside-documentation/",
+    "name": "Help Instance Help"
+}</script><!-- End Schema.org --></head><body data-id="services" data-main-title="Services" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs=""><div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>Help Instance  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="services" id="services.md">Services</h1><p id="pvpikv_3">Services are used to expose pods to the network. In this case, we have three services defined for the Caddy pod, the database pod, and the app pod.</p><section class="chapter"><h2 id="caddy-pod-service" data-toc="caddy-pod-service">Caddy pod service</h2><p id="pvpikv_7">The service for the Caddy pod is defined as follows:</p><div class="code-block" data-lang="none">
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: magic-frame-caddy
+  name: magic-frame-caddy
+  namespace: magic-frame
+spec:
+  type: NodePort
+  ports:
+    - name: &quot;80&quot;
+      port: 80
+      targetPort: 80
+      nodePort: 11112 # External app access (http): choose your own port here
+    - name: &quot;443&quot;
+      port: 443
+      nodePort: 11443 # External app access (https): choose your own port here
+      targetPort: 443
+    - name: 443-udp
+      port: 443
+      protocol: UDP
+      targetPort: 443
+    - name: &quot;2019&quot;
+      port: 2019
+      targetPort: 2019
+  selector:
+    app: magic-frame-caddy
+</div></section><section class="chapter"><h2 id="database-pod-service" data-toc="database-pod-service">Database pod service</h2><p id="pvpikv_9">The service for the database pod is defined as follows:</p><div class="code-block" data-lang="none">
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: magic-frame-db
+  name: magic-frame-db
+  namespace: magic-frame
+spec:
+  type: ClusterIP
+  ports:
+    - name: db-port
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+  selector:
+    app: magic-frame-db
+</div></section><section class="chapter"><h2 id="app-pod-service" data-toc="app-pod-service">App pod service</h2><p id="pvpikv_11">The service for the app pod is defined as follows:</p><div class="code-block" data-lang="none">
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: magic-frame-app
+  name: magic-frame-app
+  namespace: magic-frame
+spec:
+  type: ClusterIP
+  ports:
+    - name: mf-port
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+  selector:
+    app: magic-frame-app
+</div></section><div class="last-modified">16 juni 2026</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="persistent-volume-claims-pvc.html" class="navigation-links__prev">Persistent Volume Claims (PVC)</a><a href="deployments.html" class="navigation-links__next">Deployments</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.27.0-b1156/app.js"></script></body></html>
